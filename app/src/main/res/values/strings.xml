@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">PongOnline2</string>
+    <string name="title_secondactivity_list">Items</string>
+    <string name="title_secondactivity_detail">SecondActivity Detail</string>
+
+    <string name="title_activity_game">GameActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
