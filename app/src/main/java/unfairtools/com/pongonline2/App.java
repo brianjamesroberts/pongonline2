@@ -64,8 +64,13 @@ public class App extends Application {
 
             mBoundService.initVals(getResources());
             mBoundService.initConnectionService();
+
+            //blocking call
             mBoundService.getConnectionTSL();
+            //blocking call
             mBoundService.getConnectionUDP();
+
+
             connectionReady = true;
             beginReadTSL();
             beginReadUDP();
@@ -74,24 +79,67 @@ public class App extends Application {
 
         class UDPReadRunnable implements Runnable {
             public volatile boolean halt = false;
+            App app;
+
+            public UDPReadRunnable(App app1){
+                this.app = app1;
+            }
             public void run() {
                 while(!halt) {
-                    if(!connectionReady) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        continue;
-                    }
                     String line = mBoundService.readUDP();
-                    Log.e(App.TAG, "Read udp" + line);
+                    try {
+                        if(line.equals("halt")){
+                            if(app.info.udpRunnable!=null)
+                                //halts the sending runnable
+                                app.info.udpRunnable.halt = true;
+                        }
+                        final JSONObject obj = new JSONObject(line);
+                        switch ((String) obj.get("action")) {
+                            case "GAME_INFO":
+                                //Log.e("App","Game info received");
+
+                                final JSONArray arr = obj.getJSONArray("vals");
+                                //String myNumber = arr.getString(0);
+                                final String ballPosX = arr.getString(1);
+                                final String ballPosY = arr.getString(2);
+                                final String oppPaddle = arr.getString(3);
+
+                                //Log.e("APP","GAME INFO RECEIVED!!!!");
+
+                                if(app.info.gameCanvas!=null) {
+                                    app.info.gameCanvas.post(new Runnable() {
+                                        public void run() {
+                                            try {
+                                                app.info.gameCanvas.player = Integer.parseInt(arr.getString(0));
+                                                app.info.gameCanvas.clearCanvas();
+                                                app.info.gameCanvas.xball = Float.parseFloat(ballPosX);
+                                                app.info.gameCanvas.yball = Float.parseFloat(ballPosY);
+                                                app.info.gameCanvas.oppPaddle = Float.parseFloat(oppPaddle);
+                                                app.info.gameCanvas.invalidate();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    });
+                                }
+
+
+                                break;
+                            default:
+                                break;
+
+                        }
+                    }catch (Exception e){
+
+                    };
+
+                    //Log.e(App.TAG, "Read udp " + line);
                 }
             }
         }
 
         public void beginReadUDP(){
-            new Thread(new UDPReadRunnable()).start();
+            new Thread(new UDPReadRunnable(App.this)).start();
         }
 
         public void beginReadTSL(){
@@ -173,6 +221,7 @@ public class App extends Application {
                         }
                     }catch(Exception e){
                         e.printStackTrace();
+                        System.exit(0);
                     }
                 }
             }

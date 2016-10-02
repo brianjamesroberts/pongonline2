@@ -3,9 +3,8 @@ package unfairtools.com.pongonline2;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,7 +17,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
+
 
 
 /**
@@ -159,7 +158,7 @@ public class InvitesFragment extends Fragment {
 
 
 
-                final String gameNum = mInvites.get(position).gameNumber;
+                final String gameNum = invite.gameNumber;
                 holder.acceptButton.setOnClickListener(new Button.OnClickListener(){
                     public void onClick(View v){
                         new Thread(new Runnable(){
@@ -173,6 +172,37 @@ public class InvitesFragment extends Fragment {
 
                     }
                 });
+
+            final boolean fromMe = invite.fromMe;
+
+
+            holder.playButton.setOnClickListener(new Button.OnClickListener(){
+                public void onClick(View v){
+                    new Thread(new Runnable(){
+                        public void run(){
+                            String playerNum;
+                            if(fromMe)
+                                playerNum = "1";
+                            else
+                                playerNum = "2";
+
+                            //String gameNum = invite.gameNumber;
+                            InfoObject info  = new InfoObject();
+                            info.action = "JOIN_GAME";
+                            info.vals = new String[]{app.info.user,playerNum,gameNum};
+                            app.mBoundService.sendTSL(info.toJSon());
+
+                        }
+                    }).start();
+                    String playerNum;
+                    if(fromMe)
+                        playerNum = "1";
+                    else
+                        playerNum = "2";
+                    ((GameActivity)InvitesFragment.this.getActivity()).swapForGame(gameNum, playerNum);
+
+                }
+            });
 
             holder.otherUser.invalidate();
             holder.gameNumber.invalidate();
@@ -255,13 +285,17 @@ public class InvitesFragment extends Fragment {
 
 
 public void checkInvitesView(){
-    InviteAdapter invAdap = (InviteAdapter)((RecyclerView)getView().findViewById(R.id.recyclerview_invites)).getAdapter();
-    if(app.info.invites==null)
-        invAdap.setInvites(new ArrayList<Invite>());
-    else
-        invAdap.setInvites(app.info.invites);
-    invAdap.notifyDataSetChanged();
-    ((RecyclerView)getView().findViewById(R.id.recyclerview_invites)).invalidate();
+    try {
+        InviteAdapter invAdap = (InviteAdapter) ((RecyclerView) getView().findViewById(R.id.recyclerview_invites)).getAdapter();
+        if (app.info.invites == null)
+            invAdap.setInvites(new ArrayList<Invite>());
+        else
+            invAdap.setInvites(app.info.invites);
+        invAdap.notifyDataSetChanged();
+        ((RecyclerView) getView().findViewById(R.id.recyclerview_invites)).invalidate();
+    }catch(Exception e){
+        e.printStackTrace();
+    }
 }
 
 

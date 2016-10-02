@@ -8,6 +8,11 @@ import org.json.JSONObject;
  */
 
 class InfoObject {
+
+    public String toJSon(){
+        return this.toJSon(this);
+    }
+
     public String toJSon(InfoObject obj) {
         JSONObject jo = new JSONObject();
         try {

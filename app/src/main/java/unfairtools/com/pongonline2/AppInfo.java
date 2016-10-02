@@ -12,7 +12,9 @@ public class AppInfo {
     String password;
     String firstOrSecondPlayer;
     ArrayList<Invite> invites;
-    CheckInvitesRunnable checkInvitesRunnable;
+    volatile CheckInvitesRunnable checkInvitesRunnable;
+    volatile GameFragment.SendGameInfoUDPRunnable udpRunnable;
+    CanvasView gameCanvas;
 
 
 

@@ -9,7 +9,9 @@ import android.os.Bundle;
 import android.view.View;
 
 
-public class GameActivity extends AppCompatActivity implements InvitesFragment.OnFragmentInteractionListener {
+public class GameActivity extends AppCompatActivity implements
+        GameFragment.OnFragmentInteractionListener,
+        InvitesFragment.OnFragmentInteractionListener {
 
 public void onFragmentInteraction(Uri uri){
 
@@ -42,13 +44,31 @@ public void onFragmentInteraction(Uri uri){
 
         FragmentManager fm = getSupportFragmentManager();
 
-        Fragment frag = fm.findFragmentById(R.id.frag_container_invites);
+        Fragment frag = fm.findFragmentByTag("invites_fragment");
 
         if(frag==null){
             frag = new InvitesFragment();
-            fm.beginTransaction().add(R.id.frag_container_invites,frag).commit();
+
+            fm.beginTransaction().add(R.id.frag_container_invites,frag,"invites_fragment").commit();
         }
 
+
+    }
+
+    public void swapForGame(String gameNum, String playerNum){
+        FragmentManager fm = getSupportFragmentManager();
+
+        Fragment frag = fm.findFragmentByTag("game_fragment");
+        if(frag==null)
+            frag = new GameFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("playerNumber",playerNum);
+        bundle.putString("gameNumber", gameNum);
+        frag.setArguments(bundle);
+
+        fm.beginTransaction()
+                .replace(R.id.frag_container_invites,frag,"invites_fragment")
+                .addToBackStack("game_fragment").commit();
 
     }
 

@@ -21,14 +21,12 @@ class CheckInvitesRunnable implements Runnable{
                 inf.vals = new String[]{app.info.user};
                 final String json = inf.toJSon(inf);
                 app.mBoundService.sendTSL(json);
-                Thread.sleep(2500);
                 invitesFragment.getView().post(new Runnable(){
                     public void run(){
                         invitesFragment.checkInvitesView();
                     }
                 });
-
-
+                Thread.sleep(1000);
 
             } catch (Exception e) {
 
