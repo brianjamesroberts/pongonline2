@@ -13,7 +13,7 @@ class InfoObject {
         return this.toJSon(this);
     }
 
-    public String toJSon(InfoObject obj) {
+    private String toJSon(InfoObject obj) {
         JSONObject jo = new JSONObject();
         try {
             jo.put("action", obj.action);

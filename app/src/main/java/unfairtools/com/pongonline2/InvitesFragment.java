@@ -166,7 +166,7 @@ public class InvitesFragment extends Fragment {
                                 InfoObject info = new InfoObject();
                                 info.action = "VALIDATE_GAME_INVITE";
                                 info.vals = new String[]{gameNum};
-                                app.mBoundService.sendTSL(info.toJSon(info));
+                                app.mBoundService.sendTSL(info.toJSon());
                             }
                         }).start();
 
@@ -252,7 +252,7 @@ public class InvitesFragment extends Fragment {
                             inf.action = "NEW_GAME";
                             inf.appName = "pongonline";
                             inf.vals = new String[]{inviteName,app.info.user};
-                            String json = inf.toJSon(inf);
+                            String json = inf.toJSon();
                             app.mBoundService.sendTSL(json);
                         }catch(Exception e){
                             e.printStackTrace();

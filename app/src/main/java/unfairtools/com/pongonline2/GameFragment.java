@@ -80,7 +80,7 @@ public class GameFragment extends Fragment {
                     inf.action = "SEND_GAME_INFO";
                     inf.vals = new String[]{app.info.user, mGameNumber, mPlayerNumber, canvas.getPaddleY() + ""};
                     //inf.vals = new String[]{mGameNumber,mPlayerNumber};
-                    app.mBoundService.sendUDP(inf.toJSon(inf));
+                    app.mBoundService.sendUDP(inf.toJSon());
                 }catch(Exception e){
 
                 }

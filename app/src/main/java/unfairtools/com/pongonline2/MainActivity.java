@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
                         String passWord = ((EditText)findViewById(R.id.edittext_password)).getText().toString();
                         infoObj.vals = new String[]{userName, passWord};
                         infoObj.appName = "pongonline";
-                        app.mBoundService.sendTSL(infoObj.toJSon(infoObj));
+                        app.mBoundService.sendTSL(infoObj.toJSon());
                     }
                 }).start();
             }

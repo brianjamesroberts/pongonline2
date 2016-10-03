@@ -19,7 +19,7 @@ class CheckInvitesRunnable implements Runnable{
                 inf.action = "INVITES?";
                 inf.appName = "pongonline";
                 inf.vals = new String[]{app.info.user};
-                final String json = inf.toJSon(inf);
+                final String json = inf.toJSon();
                 app.mBoundService.sendTSL(json);
                 invitesFragment.getView().post(new Runnable(){
                     public void run(){
