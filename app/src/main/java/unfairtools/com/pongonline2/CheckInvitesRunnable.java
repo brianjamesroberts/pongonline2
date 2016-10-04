@@ -13,6 +13,7 @@ class CheckInvitesRunnable implements Runnable{
     }
     public volatile boolean halt = false;
     public void run(){
+        app.info.invites = null;
         while(!halt) {
             try {
                 InfoObject inf = new InfoObject();

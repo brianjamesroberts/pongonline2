@@ -85,16 +85,37 @@ public class App extends Application {
                 this.app = app1;
             }
             public void run() {
-                while(!halt) {
+                boolean shown = false;
+                while(!halt & !shown) {
                     String line = mBoundService.readUDP();
                     try {
-                        if(line.equals("halt")){
-                            if(app.info.udpRunnable!=null)
-                                //halts the sending runnable
-                                app.info.udpRunnable.halt = true;
-                        }
                         final JSONObject obj = new JSONObject(line);
                         switch ((String) obj.get("action")) {
+                            case "halt":
+                                Log.e("APP","HALT REC'VD");
+                                    if(app.info.udpRunnable!=null) {
+                                        //halts the sending runnable
+                                        app.info.udpRunnable.halt = true;
+                                        app.info.udpRunnable = null;
+                                    }
+                                    JSONArray valArray = obj.getJSONArray("vals");
+                                    if(valArray!=null){
+                                        Log.e("APP","Val array of 0 is " + valArray.getString(0));
+                                        if(valArray.getString(0).equals("true")){
+                                            if(!shown) {
+                                                Log.e("APP","Showing you win");
+                                                Snackbar.make(app.info.gameCanvas, "YOU WIN", 7000).show();
+                                                shown = true;
+                                            }
+                                        }else{
+                                            if(!shown) {
+                                                Log.e("APP","Showing you lose");
+                                                Snackbar.make(app.info.gameCanvas, "YOU LOSE", 7000).show();
+                                                shown = true;
+                                            }
+                                        }
+                                    }
+                                break;
                             case "GAME_INFO":
                                 //Log.e("App","Game info received");
 

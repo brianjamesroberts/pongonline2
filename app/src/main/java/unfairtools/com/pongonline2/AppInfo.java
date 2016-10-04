@@ -11,6 +11,8 @@ public class AppInfo {
     String user;
     String password;
     String firstOrSecondPlayer;
+    volatile boolean gameOver = false;
+    volatile boolean youWin = false;
     ArrayList<Invite> invites;
     volatile CheckInvitesRunnable checkInvitesRunnable;
     volatile GameFragment.SendGameInfoUDPRunnable udpRunnable;

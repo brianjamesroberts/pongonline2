@@ -40,6 +40,22 @@ public class MainActivity extends AppCompatActivity {
 
         app.curView = findViewById(R.id.activity_main);
 
+        findViewById(R.id.button_new_account).setOnClickListener(new Button.OnClickListener(){
+            public void onClick(View v){
+                new Thread(new Runnable(){
+                    public void run(){
+                        InfoObject infoObj = new InfoObject();
+                        infoObj.action = "NEW_ACCOUNT";
+                        String userName = ((EditText)findViewById(R.id.edittext_user)).getText().toString();
+                        String passWord = ((EditText)findViewById(R.id.edittext_password)).getText().toString();
+                        infoObj.vals = new String[]{userName,passWord};
+                        infoObj.appName = "pongonline";
+                        app.mBoundService.sendTSL(infoObj.toJSon());
+                    }
+                }).start();
+            }
+        });
+
         findViewById(R.id.button_login).setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {

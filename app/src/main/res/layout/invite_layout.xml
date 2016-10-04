@@ -4,18 +4,14 @@
     android:layout_height="wrap_content">
 
 
-    <Button
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="Accept"
-        android:id="@+id/invite_holder_accept_button">
-    </Button>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Join game"
-        android:id="@+id/invite_holder_play_button"/>
+        android:textColor="#fafafa"
+        android:id="@+id/invite_holder_play_button"
+        android:background="@drawable/text_style_join_game"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -33,6 +29,15 @@
         android:textSize="20sp"
         android:textColor="#FFFFFF"/>
 
+
+    <Button
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="Accept"
+        android:textColor="#fafafa"
+        android:id="@+id/invite_holder_accept_button"
+        android:background="@drawable/text_style_join_game">
+    </Button>
 
 
 

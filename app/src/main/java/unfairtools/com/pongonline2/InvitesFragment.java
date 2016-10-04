@@ -86,8 +86,9 @@ public class InvitesFragment extends Fragment {
                         | View.SYSTEM_UI_FLAG_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+                        //| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        //| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                );
 
         RecyclerView recyclerView = ((RecyclerView)v.findViewById(R.id.recyclerview_invites));
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -129,6 +130,10 @@ public class InvitesFragment extends Fragment {
             return new InviteHolder(view);
         }
 
+        public void clearList(){
+            mInvites.clear();
+        }
+
         @Override
         public void onBindViewHolder(InviteHolder holder, int position) {
             Invite invite = mInvites.get(position);
@@ -136,7 +141,7 @@ public class InvitesFragment extends Fragment {
             if(invite.fromMe){
                 holder.acceptButton.setVisibility(View.GONE);
                 if(invite.validated){
-                    holder.otherUser.setText("Play with " + invite.toUser + " now ->");
+                    holder.otherUser.setText(invite.toUser + " accepted your invite");
                     holder.playButton.setVisibility(View.VISIBLE);
                 }else{
                     holder.otherUser.setText("Pending invite to " + invite.toUser);
@@ -146,7 +151,7 @@ public class InvitesFragment extends Fragment {
             }else{
                 if(invite.validated){
                     holder.acceptButton.setVisibility(View.GONE);
-                    holder.otherUser.setText("You've accepted, go play ->");
+                    holder.otherUser.setText("Accepted " + invite.toUser + "'s invite");
                     holder.playButton.setVisibility(View.VISIBLE);
                 }else{
                     holder.acceptButton.setVisibility(View.VISIBLE);
@@ -174,8 +179,6 @@ public class InvitesFragment extends Fragment {
                 });
 
             final boolean fromMe = invite.fromMe;
-
-
             holder.playButton.setOnClickListener(new Button.OnClickListener(){
                 public void onClick(View v){
                     new Thread(new Runnable(){
@@ -185,7 +188,6 @@ public class InvitesFragment extends Fragment {
                                 playerNum = "1";
                             else
                                 playerNum = "2";
-
                             //String gameNum = invite.gameNumber;
                             InfoObject info  = new InfoObject();
                             info.action = "JOIN_GAME";
@@ -269,10 +271,17 @@ public class InvitesFragment extends Fragment {
 
     }
 
+    public void onResume(){
+        super.onResume();
+        ((InviteAdapter)((RecyclerView) getView().findViewById(R.id.recyclerview_invites)).getAdapter()).clearList();
+        ((RecyclerView) getView().findViewById(R.id.recyclerview_invites)).getAdapter().notifyDataSetChanged();
+    }
+
     public void onStart(){
         super.onStart();
         Log.e("InvitesFragment","Onstart called");
         app.cancelInvitesRunnable();
+        ((InviteAdapter)((RecyclerView) getView().findViewById(R.id.recyclerview_invites)).getAdapter()).clearList();
         app.info.checkInvitesRunnable = new CheckInvitesRunnable(app,this);
         new Thread(app.info.checkInvitesRunnable).start();
 
@@ -281,6 +290,8 @@ public class InvitesFragment extends Fragment {
     public void onStop(){
         super.onStop();
         app.cancelInvitesRunnable();
+        ((InviteAdapter)((RecyclerView) getView().findViewById(R.id.recyclerview_invites)).getAdapter()).clearList();
+
     }
 
 

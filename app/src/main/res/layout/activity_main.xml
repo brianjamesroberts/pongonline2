@@ -17,14 +17,31 @@
         android:text="Login"
         android:id="@+id/textView" />
 
-    <Button
-        android:text="Login"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="153dp"
-        android:id="@+id/button_login"
-        style="@style/Widget.AppCompat.Button" />
+        android:layout_width="match_parent">
+
+        <Button
+            android:text="Login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="153dp"
+            android:id="@+id/button_login"
+            style="@style/Widget.AppCompat.Button" />
+
+        <Button
+            android:text="New Account"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="153dp"
+            android:id="@+id/button_new_account"
+            style="@style/Widget.AppCompat.Button" />
+    </LinearLayout>
+
+
 
     <EditText
         android:layout_width="wrap_content"
