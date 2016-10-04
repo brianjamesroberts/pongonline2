@@ -6,6 +6,22 @@
     tools:context="unfairtools.com.pongonline2.InvitesFragment">
 
 
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/invite_fragment_username_display"
+        android:textSize="24sp"
+        android:layout_gravity="center"
+        android:textColor="#cfd8dc"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -13,12 +29,16 @@
             android:id="@+id/button_invite"
             />
         <EditText
-            android:layout_marginTop="50dp"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/edittext_invite_user"
 
-           />
+            />
+    </LinearLayout>
+
+</LinearLayout>
+
 
 
     <android.support.v7.widget.RecyclerView

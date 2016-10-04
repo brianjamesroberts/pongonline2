@@ -24,6 +24,7 @@ import java.util.ArrayList;
 
 public class App extends Application {
 
+
     public AppInfo info;
 
     public View curView;
@@ -85,8 +86,8 @@ public class App extends Application {
                 this.app = app1;
             }
             public void run() {
-                boolean shown = false;
-                while(!halt & !shown) {
+
+                while(!halt) {
                     String line = mBoundService.readUDP();
                     try {
                         final JSONObject obj = new JSONObject(line);
@@ -102,22 +103,22 @@ public class App extends Application {
                                     if(valArray!=null){
                                         Log.e("APP","Val array of 0 is " + valArray.getString(0));
                                         if(valArray.getString(0).equals("true")){
-                                            if(!shown) {
+                                            if(!AppInfo.shownWinLoseSnackbar) {
                                                 Log.e("APP","Showing you win");
                                                 Snackbar.make(app.info.gameCanvas, "YOU WIN", 7000).show();
-                                                shown = true;
+                                                AppInfo.shownWinLoseSnackbar = true;
                                             }
                                         }else{
-                                            if(!shown) {
+                                            if(!AppInfo.shownWinLoseSnackbar) {
                                                 Log.e("APP","Showing you lose");
                                                 Snackbar.make(app.info.gameCanvas, "YOU LOSE", 7000).show();
-                                                shown = true;
+                                                AppInfo.shownWinLoseSnackbar = true;
                                             }
                                         }
                                     }
                                 break;
                             case "GAME_INFO":
-                                //Log.e("App","Game info received");
+                                Log.e("App","Game info received player " + info.firstOrSecondPlayer);
 
                                 final JSONArray arr = obj.getJSONArray("vals");
                                 //String myNumber = arr.getString(0);
@@ -143,8 +144,6 @@ public class App extends Application {
                                         }
                                     });
                                 }
-
-
                                 break;
                             default:
                                 break;

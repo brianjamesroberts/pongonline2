@@ -80,6 +80,7 @@ public class ConnectionService extends Service {
     }
 
     public void sendUDP(String s){
+        Log.e("ConnectionService", "Sending UDP " + s);
         try {
             DatagramPacket dp;
             dp = new DatagramPacket(s.getBytes(), s.length());//, InetAddress.getByName(ServerIP), UDPPort);

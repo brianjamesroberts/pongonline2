@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume(){
         super.onResume();
         app.main = this;
+        app.curView = this.findViewById(R.id.activity_main);
     }
 
     public void startSecondActivity(){
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
         app.main = this;
 
-        app.curView = findViewById(R.id.activity_main);
+        //app.curView = findViewById(R.id.activity_main);
 
         findViewById(R.id.button_new_account).setOnClickListener(new Button.OnClickListener(){
             public void onClick(View v){

@@ -18,6 +18,7 @@ public class AppInfo {
     volatile GameFragment.SendGameInfoUDPRunnable udpRunnable;
     CanvasView gameCanvas;
 
+    public static boolean shownWinLoseSnackbar = false;
 
 
     public enum SCREENSTATUS {

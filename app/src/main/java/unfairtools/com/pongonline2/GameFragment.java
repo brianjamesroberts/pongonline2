@@ -90,8 +90,11 @@ public class GameFragment extends Fragment {
     }
 
 
-    public void onStart(){
-        super.onStart();
+    public void onResume(){
+        super.onResume();
+
+        AppInfo.shownWinLoseSnackbar = false;
+
         mGameNumber = getArguments().getString("gameNumber");
         mPlayerNumber = getArguments().getString("playerNumber");
         app = ((App)getActivity().getApplication());
@@ -109,8 +112,8 @@ public class GameFragment extends Fragment {
 
     }
 
-    public void onStop(){
-        super.onStop();
+    public void onPause(){
+        super.onPause();
         app.info.gameCanvas = null;
         app.info.udpRunnable = null;
         if(mUDPRunnable!=null){

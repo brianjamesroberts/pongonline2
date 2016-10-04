@@ -16,6 +16,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 
@@ -151,7 +153,7 @@ public class InvitesFragment extends Fragment {
             }else{
                 if(invite.validated){
                     holder.acceptButton.setVisibility(View.GONE);
-                    holder.otherUser.setText("Accepted " + invite.toUser + "'s invite");
+                    holder.otherUser.setText("Accepted " + invite.name + "'s invite");
                     holder.playButton.setVisibility(View.VISIBLE);
                 }else{
                     holder.acceptButton.setVisibility(View.VISIBLE);
@@ -160,7 +162,8 @@ public class InvitesFragment extends Fragment {
                 }
 
             }
-
+            holder.otherUser.invalidate();
+            holder.gameNumber.invalidate();
 
 
                 final String gameNum = invite.gameNumber;
@@ -180,34 +183,14 @@ public class InvitesFragment extends Fragment {
 
             final boolean fromMe = invite.fromMe;
             holder.playButton.setOnClickListener(new Button.OnClickListener(){
-                public void onClick(View v){
-                    new Thread(new Runnable(){
-                        public void run(){
-                            String playerNum;
-                            if(fromMe)
-                                playerNum = "1";
-                            else
-                                playerNum = "2";
-                            //String gameNum = invite.gameNumber;
-                            InfoObject info  = new InfoObject();
-                            info.action = "JOIN_GAME";
-                            info.vals = new String[]{app.info.user,playerNum,gameNum};
-                            app.mBoundService.sendTSL(info.toJSon());
-
-                        }
-                    }).start();
+                public void onClick(View v) {
                     String playerNum;
-                    if(fromMe)
-                        playerNum = "1";
-                    else
-                        playerNum = "2";
+                    if (fromMe) playerNum = "1";
+                    else playerNum = "2";
                     ((GameActivity)InvitesFragment.this.getActivity()).swapForGame(gameNum, playerNum);
-
                 }
             });
 
-            holder.otherUser.invalidate();
-            holder.gameNumber.invalidate();
         }
 
 
@@ -230,9 +213,9 @@ public class InvitesFragment extends Fragment {
     @Override
     public void onViewCreated(View v, Bundle savedInstanceState){
         final View v5 = v;
+        ((TextView)v.findViewById(R.id.invite_fragment_username_display)).setText(app.info.user);
         v.findViewById(R.id.button_invite).setOnClickListener(new Button.OnClickListener(){
             public void onClick(View vs){
-
 
                 try {
                     InputMethodManager inputManager = (InputMethodManager)
@@ -250,9 +233,10 @@ public class InvitesFragment extends Fragment {
                         try {
                             app.info.firstOrSecondPlayer = "1";
                             InfoObject inf = new InfoObject();
-                            Log.e("REQUESTING", "NEW GAMEEEE WHYYYY");
-                            inf.action = "NEW_GAME";
+                            //Log.e("REQUESTING", "NEW GAMEEEE WHYYYY");
+                            inf.action = "INVITE_USER";
                             inf.appName = "pongonline";
+                            //their name, my name.
                             inf.vals = new String[]{inviteName,app.info.user};
                             String json = inf.toJSon();
                             app.mBoundService.sendTSL(json);
