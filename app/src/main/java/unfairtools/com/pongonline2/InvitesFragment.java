@@ -225,7 +225,7 @@ public class InvitesFragment extends Fragment {
                             InputMethodManager.HIDE_NOT_ALWAYS);
 
                 }catch(Exception e){
-                    e.printStackTrace();
+                    //e.printStackTrace();
                 }
                 final String inviteName = ((EditText)v5.findViewById(R.id.edittext_invite_user)).getText().toString();
                 new Thread(new Runnable(){

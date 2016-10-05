@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0099cc"
+    android:background="#78909c"
     android:paddingTop="20dp"
     tools:context="unfairtools.com.pongonline2.GameActivity"
     android:id="@+id/frag_container_invites">

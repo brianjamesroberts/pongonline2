@@ -121,12 +121,9 @@ public class App extends Application {
                                 Log.e("App","Game info received player " + info.firstOrSecondPlayer);
 
                                 final JSONArray arr = obj.getJSONArray("vals");
-                                //String myNumber = arr.getString(0);
                                 final String ballPosX = arr.getString(1);
                                 final String ballPosY = arr.getString(2);
                                 final String oppPaddle = arr.getString(3);
-
-                                //Log.e("APP","GAME INFO RECEIVED!!!!");
 
                                 if(app.info.gameCanvas!=null) {
                                     app.info.gameCanvas.post(new Runnable() {
@@ -150,10 +147,8 @@ public class App extends Application {
 
                         }
                     }catch (Exception e){
-
-                    };
-
-                    //Log.e(App.TAG, "Read udp " + line);
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -189,6 +184,7 @@ public class App extends Application {
                         switch ((String) obj.get("action")) {
 
                             case "INVITE_RECEIVE":
+                                //2d String array
                                 JSONArray arr = obj.getJSONArray("maps");
                                 int size = arr.length();
                                 ArrayList<Invite> invites = new ArrayList<Invite>();

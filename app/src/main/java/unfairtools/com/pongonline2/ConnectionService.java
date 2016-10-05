@@ -80,13 +80,10 @@ public class ConnectionService extends Service {
     }
 
     public void sendUDP(String s){
-        Log.e("ConnectionService", "Sending UDP " + s);
         try {
             DatagramPacket dp;
-            dp = new DatagramPacket(s.getBytes(), s.length());//, InetAddress.getByName(ServerIP), UDPPort);
-            //d1.setBroadcast(true);
+            dp = new DatagramPacket(s.getBytes(), s.length());
             d1.send(dp);
-            //Log.e(MainActivity.TAG, "Local send port: " + d1.getLocalPort());
         }catch (java.net.SocketException e){
             e.printStackTrace();
         }catch(java.io.IOException e){
@@ -95,11 +92,11 @@ public class ConnectionService extends Service {
     }
 
     public void sendTSL(String s){
-        //Log.e("Attempting to send ", s);
         try {
             if(sockey==null)
                 sockey = new PrintWriter(new BufferedWriter(new OutputStreamWriter(s1.getOutputStream())), true);
             sockey.println(s);
+            sockey.flush();
 
         }catch (Exception e){
             e.printStackTrace();
@@ -157,9 +154,6 @@ public class ConnectionService extends Service {
 
     }
 
-
-
-
     public boolean getConnectionTSL(){
         InitTSLRunnable r = new InitTSLRunnable();
         Thread t = new Thread(r);
@@ -196,7 +190,7 @@ public class ConnectionService extends Service {
 
 
     public void initConnectionService() {
-        Log.i("ConnectionService", "Connection Serivce Constructor");
+        Log.i("ConnectionService", "intiConnectionService()");
         try {
             SSLContext sslcontext = SSLContext.getInstance("SSL");
             KeyStore ks = KeyStore.getInstance("BKS");
