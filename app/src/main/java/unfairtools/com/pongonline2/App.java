@@ -93,7 +93,7 @@ public class App extends Application {
                         final JSONObject obj = new JSONObject(line);
                         switch ((String) obj.get("action")) {
                             case "halt":
-                                Log.e("APP","HALT REC'VD");
+                                //Log.e("APP","HALT REC'VD");
                                     if(app.info.udpRunnable!=null) {
                                         //halts the sending runnable
                                         app.info.udpRunnable.halt = true;
@@ -101,7 +101,7 @@ public class App extends Application {
                                     }
                                     JSONArray valArray = obj.getJSONArray("vals");
                                     if(valArray!=null){
-                                        Log.e("APP","Val array of 0 is " + valArray.getString(0));
+                                        //Log.e("APP","Val array of 0 is " + valArray.getString(0));
                                         if(valArray.getString(0).equals("true")){
                                             if(!AppInfo.shownWinLoseSnackbar) {
                                                 Log.e("APP","Showing you win");
@@ -118,7 +118,7 @@ public class App extends Application {
                                     }
                                 break;
                             case "GAME_INFO":
-                                Log.e("App","Game info received player " + info.firstOrSecondPlayer);
+                                //Log.e("App","Game info received player " + info.firstOrSecondPlayer);
 
                                 final JSONArray arr = obj.getJSONArray("vals");
                                 final String ballPosX = arr.getString(1);
