@@ -147,6 +147,7 @@ public class App extends Application {
 
                         }
                     }catch (Exception e){
+                        Log.e("App","" + line);
                         e.printStackTrace();
                     }
                 }
