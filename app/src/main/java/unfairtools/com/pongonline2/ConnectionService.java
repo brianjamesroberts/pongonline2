@@ -52,7 +52,7 @@ public class ConnectionService extends Service {
 
     SocketFactory mSocketFactory;
 
-    SSLSocket s1;
+    //SSLSocket s1;
     DatagramSocket d1;
 
     PrintWriter sockey;
@@ -66,20 +66,20 @@ public class ConnectionService extends Service {
     private final IBinder mBinder = new LocalBinder();
 
 
-    public String readTSLLine() {
-        try {
-            BufferedReader buf = new BufferedReader(new InputStreamReader(s1.getInputStream()));
-            String s = buf.readLine();
-            //buf.close();
-            //Log.e("read:",s);
-            return s;
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(0);
-            return "";
-        }
-
-    }
+//    public String readTSLLine() {
+//        try {
+//            BufferedReader buf = new BufferedReader(new InputStreamReader(s1.getInputStream()));
+//            String s = buf.readLine();
+//            //buf.close();
+//            //Log.e("read:",s);
+//            return s;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            System.exit(0);
+//            return "";
+//        }
+//
+//    }
 
     public String readUDP(){
         try{
@@ -108,17 +108,17 @@ public class ConnectionService extends Service {
         }
     }
 
-    public void sendTSL(String s){
-        try {
-            if(sockey==null)
-                sockey = new PrintWriter(new BufferedWriter(new OutputStreamWriter(s1.getOutputStream())), true);
-            sockey.println(s);
-            sockey.flush();
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
+//    public void sendTSL(String s){
+//        try {
+//            if(sockey==null)
+//                sockey = new PrintWriter(new BufferedWriter(new OutputStreamWriter(s1.getOutputStream())), true);
+//            sockey.println(s);
+//            sockey.flush();
+//
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//    }
 
     class InitUDPRunnable implements Runnable{
         public synchronized void run2(){
@@ -136,21 +136,21 @@ public class ConnectionService extends Service {
         }
     }
 
-    class InitTSLRunnable implements Runnable{
-        public synchronized void run2(){
-            try {
-                s1 = (SSLSocket) mSocketFactory.createSocket(ServerIP, TSLPort);
-                s1.startHandshake();
-            }catch(Exception e){
-                e.printStackTrace();
-            }finally{
-                notify();
-            }
-        }
-        public void run() {
-            run2();
-        }
-    }
+//    class InitTSLRunnable implements Runnable{
+//        public synchronized void run2(){
+//            try {
+//                s1 = (SSLSocket) mSocketFactory.createSocket(ServerIP, TSLPort);
+//                s1.startHandshake();
+//            }catch(Exception e){
+//                e.printStackTrace();
+//            }finally{
+//                notify();
+//            }
+//        }
+//        public void run() {
+//            run2();
+//        }
+//    }
 
 
     public boolean getConnectionUDP(){
@@ -171,20 +171,20 @@ public class ConnectionService extends Service {
 
     }
 
-    public boolean getConnectionTSL(){
-        InitTSLRunnable r = new InitTSLRunnable();
-        Thread t = new Thread(r);
-        try {
-            synchronized (r) {
-                t.start();
-                r.wait();
-                return s1.isConnected();
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-            return false;
-        }
-    }
+//    public boolean getConnectionTSL(){
+//        InitTSLRunnable r = new InitTSLRunnable();
+//        Thread t = new Thread(r);
+//        try {
+//            synchronized (r) {
+//                t.start();
+//                r.wait();
+//                return s1.isConnected();
+//            }
+//        }catch(Exception e){
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
 
     public class LocalBinder extends Binder {
         ConnectionService getService() {
@@ -206,20 +206,20 @@ public class ConnectionService extends Service {
     }
 
 
-    public void initConnectionService() {
-        Log.i("ConnectionService", "intiConnectionService()");
-        try {
-            SSLContext sslcontext = SSLContext.getInstance("SSL");
-            KeyStore ks = KeyStore.getInstance("BKS");
-            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            ks.load(resources.openRawResource(R.raw.mykeystore), "mysecret".toCharArray());
-            trustManagerFactory.init(ks);
-            sslcontext.init(null, trustManagerFactory.getTrustManagers(), null);
-            mSocketFactory = sslcontext.getSocketFactory();
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-    }
+//    public void initConnectionService() {
+//        Log.i("ConnectionService", "intiConnectionService()");
+//        try {
+//            SSLContext sslcontext = SSLContext.getInstance("SSL");
+//            KeyStore ks = KeyStore.getInstance("BKS");
+//            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+//            ks.load(resources.openRawResource(R.raw.mykeystore), "mysecret".toCharArray());
+//            trustManagerFactory.init(ks);
+//            sslcontext.init(null, trustManagerFactory.getTrustManagers(), null);
+//            mSocketFactory = sslcontext.getSocketFactory();
+//        }catch(Exception e){
+//            e.printStackTrace();
+//        }
+//    }
 
     @Override
     public IBinder onBind(Intent intent) {

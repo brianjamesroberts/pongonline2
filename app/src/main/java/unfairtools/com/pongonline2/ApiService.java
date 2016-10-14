@@ -19,4 +19,13 @@ public interface ApiService {
 
     @POST("invites")
     public Call<InfoObject> postInvites(@Header("username") String username);
+
+    @POST("invite_user")
+    public Call<InfoObject> inviteUser(@Header("invited-user") String invitedUser, @Header("inviting-user") String invitingUser);
+
+    @POST("new_account")
+    public Call<InfoObject> newAccount(@Header("username") String username, @Header("password") String password);
+
+    @POST("validate_invite")
+    public Call<InfoObject> validateInvite(@Header("game-number") String gameNumber);
 }

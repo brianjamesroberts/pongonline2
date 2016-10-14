@@ -74,7 +74,7 @@ public class App extends Application {
                 ApiService service = mBoundService.getRetrofit().create(ApiService.class);
                 Call<InfoObject> call = service.postLogin(usernm1,passwd1);
 
-                Log.e("call","URL of call is " + call.request().url());
+                //Log.e("call","URL of call is " + call.request().url());
 
                 call.enqueue(new Callback<InfoObject>(){
 
@@ -123,16 +123,16 @@ public class App extends Application {
 
 
             mBoundService.initVals(getResources());
-            mBoundService.initConnectionService();
+            //mBoundService.initConnectionService();
 
             //blocking call
-            mBoundService.getConnectionTSL();
+            //mBoundService.getConnectionTSL();
             //blocking call
             mBoundService.getConnectionUDP();
 
 
             connectionReady = true;
-            beginReadTSL();
+            //beginReadTSL();
             beginReadUDP();
 
         }
@@ -170,7 +170,9 @@ public class App extends Application {
                                         app.info.udpRunnable = null;
                                     }
                                     JSONArray valArray = obj.getJSONArray("vals");
-                                    if(valArray!=null){
+
+
+                                    if(valArray!=null && !valArray.getString(0).equals("ignore")){
                                         //Log.e("APP","Val array of 0 is " + valArray.getString(0));
                                         if(valArray.getString(0).equals("true")){
                                             if(!AppInfo.shownWinLoseSnackbar) {
@@ -227,44 +229,43 @@ public class App extends Application {
         public void beginReadUDP(){
             new Thread(new UDPReadRunnable(App.this)).start();
         }
+//
+//        public void beginReadTSL(){
+//            new Thread(new TSLReadRunnable()).start();
+//        }
 
-        public void beginReadTSL(){
-            new Thread(new TSLReadRunnable()).start();
-        }
 
 
-
-        class TSLReadRunnable implements Runnable {
-            public volatile boolean halt = false;
-
-            public void run() {
-                while (!halt) {
-                    if (!connectionReady) {
-                        try {
-                            Thread.sleep(100);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        continue;
-                    }
-                    //Log.e(App.TAG, "waiting for read...");
-                    String line = mBoundService.readTSLLine();
-                    //Log.e(App.TAG, "Read tsl: " + line);
-                    try {
-                        final JSONObject obj = new JSONObject(line);
-
-                        readTSLInfo(obj);
-
-                    }catch(Exception e){
-                        e.printStackTrace();
-                        System.exit(0);
-                    }
-                }
-            }
-        }
+//        class TSLReadRunnable implements Runnable {
+//            public volatile boolean halt = false;
+//
+//            public void run() {
+//                while (!halt) {
+//                    if (!connectionReady) {
+//                        try {
+//                            Thread.sleep(100);
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                        continue;
+//                    }
+//                    //Log.e(App.TAG, "waiting for read...");
+//                    String line = mBoundService.readTSLLine();
+//                    //Log.e(App.TAG, "Read tsl: " + line);
+//                    try {
+//                        final JSONObject obj = new JSONObject(line);
+//                        readTSLInfo(obj);
+//
+//                    }catch(Exception e){
+//                        e.printStackTrace();
+//                        System.exit(0);
+//                    }
+//                }
+//            }
+//        }
 
         public void readTSLInfo(JSONObject obj){
-            Log.e("resp","readTSLInfo called");
+            //Log.e("resp","readTSLInfo called");
             try {
                 switch ((String) obj.get("action")) {
 
@@ -294,7 +295,11 @@ public class App extends Application {
                             if(invitesFragment!=null) {
                                 invitesFragment.getView().post(new Runnable() {
                                     public void run() {
-                                        invitesFragment.checkInvitesView();
+                                        try {
+                                            invitesFragment.checkInvitesView();
+                                        }catch(Exception e){
+                                            e.printStackTrace();
+                                        }
                                     }
                                 });
                             }

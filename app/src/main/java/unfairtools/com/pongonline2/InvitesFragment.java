@@ -16,10 +16,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
+import retrofit2.Call;
+import retrofit2.Callback;
 
 
 /**
@@ -171,10 +174,35 @@ public class InvitesFragment extends Fragment {
                     public void onClick(View v){
                         new Thread(new Runnable(){
                             public void run(){
-                                InfoObject info = new InfoObject();
-                                info.action = "VALIDATE_GAME_INVITE";
-                                info.vals = new String[]{gameNum};
-                                app.mBoundService.sendTSL(info.toJSon());
+                                //InfoObject info = new InfoObject();
+                                //info.action = "VALIDATE_GAME_INVITE";
+                                //info.vals = new String[]{gameNum};
+                               // app.mBoundService.sendTSL(info.toJSon());
+
+                                ApiService svc = app.mBoundService.getRetrofit().create(ApiService.class);
+                                Call<InfoObject> call = svc.validateInvite(gameNum);
+                                try {
+                                    call.execute();
+//                                      (new Callback<InfoObject>(){
+//                                        @Override
+//                                        public void onResponse(Call<InfoObject> call, retrofit2.Response<InfoObject> response) {
+//                                            try {
+//                                                Log.e("Recvd", new JSONObject(response.body().toJSon()).toString());
+//                                                if())
+//                                                app.readTSLInfo(new JSONObject(response.body().toJSon()));
+//                                            }catch (Exception e){
+//                                                e.printStackTrace();
+//                                            }
+//                                        }
+//                                        @Override
+//                                        public void onFailure(Call<InfoObject> call, Throwable t) {
+//                                            Log.e("resp","failed " + t.toString());
+//                                        }
+//                                    });
+                                }catch(Exception e){
+                                    e.printStackTrace();
+                                }
+
                             }
                         }).start();
 
@@ -231,15 +259,32 @@ public class InvitesFragment extends Fragment {
                 new Thread(new Runnable(){
                     public void run(){
                         try {
-                            app.info.firstOrSecondPlayer = "1";
-                            InfoObject inf = new InfoObject();
-                            //Log.e("REQUESTING", "NEW GAMEEEE WHYYYY");
-                            inf.action = "INVITE_USER";
-                            inf.appName = "pongonline";
-                            //their name, my name.
-                            inf.vals = new String[]{inviteName,app.info.user};
-                            String json = inf.toJSon();
-                            app.mBoundService.sendTSL(json);
+                            //app.info.firstOrSecondPlayer = "1";
+//
+
+                            ApiService a = app.mBoundService.getRetrofit().create(ApiService.class);
+                            Call<InfoObject> call = a.inviteUser(inviteName,app.info.user);
+
+                            Log.e("call","invite user" + call.request().url());
+
+                            call.enqueue(new Callback<InfoObject>(){
+                                @Override
+                                public void onResponse(Call<InfoObject> call, retrofit2.Response<InfoObject> response) {
+                                    try {
+                                        Log.e("Recvd", new JSONObject(response.body().toJSon()).toString());
+                                        app.readTSLInfo(new JSONObject(response.body().toJSon()));
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                    }
+                                }
+                                @Override
+                                public void onFailure(Call<InfoObject> call, Throwable t) {
+                                    Log.e("resp","failed " + t.toString());
+                                }
+                            });
+
+
+
                         }catch(Exception e){
                             e.printStackTrace();
                         }

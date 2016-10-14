@@ -12,6 +12,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.json.JSONObject;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+
 /**
  * Created by brianroberts on 10/4/16.
  */
@@ -51,13 +56,32 @@ public class NewAccountDialogFragment extends DialogFragment {
                 }
                 new Thread(new Runnable(){
                     public void run(){
-                        InfoObject infoObj = new InfoObject();
-                        infoObj.action = "NEW_ACCOUNT";
+                        //InfoObject infoObj = new InfoObject();
+                        //infoObj.action = "NEW_ACCOUNT";
                         String userName = ((EditText)v5.findViewById(R.id.edittext_user_new_account)).getText().toString();
                         String passWord = ((EditText)v5.findViewById(R.id.edittext_password_new_account)).getText().toString();
-                        infoObj.vals = new String[]{userName,passWord};
-                        infoObj.appName = "pongonline";
-                        app.mBoundService.sendTSL(infoObj.toJSon());
+                        //infoObj.vals = new String[]{userName,passWord};
+                        //infoObj.appName = "pongonline";
+
+                        ApiService svc = app.mBoundService.getRetrofit().create(ApiService.class);
+                        Call<InfoObject> call = svc.newAccount(userName,passWord);
+                        call.enqueue(new Callback<InfoObject>(){
+                            @Override
+                            public void onResponse(Call<InfoObject> call, retrofit2.Response<InfoObject> response) {
+                                try {
+                                    Log.e("Recvd", new JSONObject(response.body().toJSon()).toString());
+                                    app.readTSLInfo(new JSONObject(response.body().toJSon()));
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
+                            }
+                            @Override
+                            public void onFailure(Call<InfoObject> call, Throwable t) {
+                                Log.e("resp","failed " + t.toString());
+                            }
+                        });
+
+                        //app.mBoundService.sendTSL(infoObj.toJSon());
                     }
                 }).start();
 
