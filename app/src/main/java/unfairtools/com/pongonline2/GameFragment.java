@@ -74,7 +74,7 @@ public class GameFragment extends Fragment {
                 //Log.e("GAMEFRAGMENT","Halt is " + halt);
 
                 try{
-                    Thread.sleep(50);
+                    Thread.sleep(30);
                     //Log.e("GameFragment","Sending game info udp");
                     InfoObject inf = new InfoObject();
                     inf.action = "SEND_GAME_INFO";

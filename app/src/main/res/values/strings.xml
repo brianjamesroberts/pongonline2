@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PongOnline2</string>
+    <string name="app_name">Pong Online</string>
     <string name="title_secondactivity_list">Items</string>
     <string name="title_secondactivity_detail">SecondActivity Detail</string>
 

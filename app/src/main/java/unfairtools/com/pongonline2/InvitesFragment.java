@@ -259,6 +259,13 @@ public class InvitesFragment extends Fragment {
         super.onResume();
         ((InviteAdapter)((RecyclerView) getView().findViewById(R.id.recyclerview_invites)).getAdapter()).clearList();
         ((RecyclerView) getView().findViewById(R.id.recyclerview_invites)).getAdapter().notifyDataSetChanged();
+        app.invitesFragment = this;
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        app.invitesFragment = null;
     }
 
     public void onStart(){
@@ -266,7 +273,7 @@ public class InvitesFragment extends Fragment {
         Log.e("InvitesFragment","Onstart called");
         app.cancelInvitesRunnable();
         ((InviteAdapter)((RecyclerView) getView().findViewById(R.id.recyclerview_invites)).getAdapter()).clearList();
-        app.info.checkInvitesRunnable = new CheckInvitesRunnable(app,this);
+        app.info.checkInvitesRunnable = new CheckInvitesRunnable(app);
         new Thread(app.info.checkInvitesRunnable).start();
 
     }

@@ -13,7 +13,8 @@
         android:textColor="#fafafa"
         android:id="@+id/invite_holder_play_button"
         android:background="@drawable/text_style_join_game"
-        android:paddingRight="10dp"/>
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

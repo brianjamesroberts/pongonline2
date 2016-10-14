@@ -1,14 +1,17 @@
 package unfairtools.com.pongonline2;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.icu.util.TimeUnit;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -17,21 +20,35 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.nio.charset.Charset;
 import java.security.KeyStore;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 
 import javax.net.SocketFactory;
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
+
+import okhttp3.OkHttpClient;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ConnectionService extends Service {
 //    @Inject
 //    Application mApp;
 
-
-
     private static String ServerIP = "158.69.207.153";
     private static int UDPPort = 8086;
     private static int TSLPort = 8085;
+
+
+    private Retrofit retrofit;
 
     SocketFactory mSocketFactory;
 
@@ -210,4 +227,60 @@ public class ConnectionService extends Service {
 
         return mBinder;
     }
+
+
+    public Retrofit getRetrofit(){
+        if(retrofit == null)
+            retrofit = createAdapter();
+        return retrofit;
+    }
+
+    private Retrofit createAdapter() {
+
+    try {
+
+        SSLContext sslcontext = SSLContext.getInstance("TLS");
+        KeyStore ks = KeyStore.getInstance("BKS");
+        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        //TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("X509");
+        ks.load(resources.openRawResource(R.raw.mykeystore), "mysecret".toCharArray());
+        trustManagerFactory.init(ks);
+        sslcontext.init(null, trustManagerFactory.getTrustManagers(), null);
+
+
+
+        X509TrustManager c = (X509TrustManager) trustManagerFactory.getTrustManagers()[0];
+        OkHttpClient client = new OkHttpClient.Builder()
+                .sslSocketFactory(sslcontext.getSocketFactory(),c)
+                .hostnameVerifier(new HostnameVerifier() {
+                    @Override
+                    public boolean verify(String s, SSLSession sslSession) {
+                        Log.e("verify", s + " " + sslSession.toString());
+                        if( s.equals("158.69.207.153")) {
+                            Log.e("Trust", "Trust verified");
+                            return true;
+                        }else {
+                            Log.e("DENIED", "denied trust verifier");
+                            return false;
+                        }
+                    }
+                })
+                .build();
+
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl(App.loginURL)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+    }catch(Exception e){
+        e.printStackTrace();
+    }
+
+        return retrofit;
+
+    }
+
+
+
 }

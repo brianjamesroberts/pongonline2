@@ -90,20 +90,23 @@ public class MainActivity extends AppCompatActivity {
                         ((EditText)findViewById(R.id.edittext_user)).getText().toString()).commit();
 
 
-                new Thread(new Runnable() {
-                    public void run() {
-                        InfoObject infoObj = new InfoObject();
-                        infoObj.action = "LOGIN";
-                        String userName = ((EditText)findViewById(R.id.edittext_user)).getText().toString();
-                        String passWord = ((EditText)findViewById(R.id.edittext_password)).getText().toString();
-                        infoObj.vals = new String[]{userName, passWord};
-                        infoObj.appName = "pongonline";
+                app.login(((EditText)findViewById(R.id.edittext_user)).getText().toString(),
+                        ((EditText)findViewById(R.id.edittext_password)).getText().toString());
 
-
-
-                        app.mBoundService.sendTSL(infoObj.toJSon());
-                    }
-                }).start();
+//                new Thread(new Runnable() {
+//                    public void run() {
+//                        InfoObject infoObj = new InfoObject();
+//                        infoObj.action = "LOGIN";
+//                        String userName = ((EditText)findViewById(R.id.edittext_user)).getText().toString();
+//                        String passWord = ((EditText)findViewById(R.id.edittext_password)).getText().toString();
+//                        infoObj.vals = new String[]{userName, passWord};
+//                        infoObj.appName = "pongonline";
+//
+//
+//
+//                        app.mBoundService.sendTSL(infoObj.toJSon());
+//                    }
+//                }).start();
             }
         });
     }

@@ -14,9 +14,28 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
+import java.net.URL;
 import java.util.ArrayList;
+
+import javax.net.ssl.HttpsURLConnection;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by brianroberts on 9/29/16.
@@ -29,6 +48,8 @@ public class App extends Application {
 
     public View curView;
 
+    public InvitesFragment invitesFragment;
+
     public InvitesFragment invFrag;
 
 
@@ -40,6 +61,45 @@ public class App extends Application {
     public ConnectionService mBoundService;
 
 
+    public static String loginURL = "https://158.69.207.153/pongonline/api/";
+
+
+    public void login(String usernm, String passwd){
+        final String usernm1 = usernm;
+        final String passwd1 = passwd;
+        new Thread(new Runnable(){
+            public void run() {
+
+                Log.e(TAG,"Logging in");
+                ApiService service = mBoundService.getRetrofit().create(ApiService.class);
+                Call<InfoObject> call = service.postLogin(usernm1,passwd1);
+
+                Log.e("call","URL of call is " + call.request().url());
+
+                call.enqueue(new Callback<InfoObject>(){
+
+                    @Override
+                    public void onResponse(Call<InfoObject> call, retrofit2.Response<InfoObject> response) {
+                        try {
+                            Log.e("Recvd", new JSONObject(response.body().toJSon()).toString());
+                            readTSLInfo(new JSONObject(response.body().toJSon()));
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<InfoObject> call, Throwable t) {
+                        Log.e("resp","failed " + t.toString());
+                    }
+                });
+
+
+
+            }
+        }).start();
+    }
 
     public volatile boolean connectionReady = false;
 
@@ -62,7 +122,6 @@ public class App extends Application {
             mBoundService = ((ConnectionService.LocalBinder) service).getService();
 
 
-
             mBoundService.initVals(getResources());
             mBoundService.initConnectionService();
 
@@ -77,6 +136,17 @@ public class App extends Application {
             beginReadUDP();
 
         }
+
+        public void onServiceDisconnected(ComponentName className) {
+            // This is called when the connection with the service has been
+            // unexpectedly disconnected -- that is, its process crashed.
+            // Because it is running in our same process, we should never
+            // see this happen.
+            mBoundService = null;
+            Toast.makeText(getApplicationContext(), "Service disconnected",
+                    Toast.LENGTH_SHORT).show();
+        }
+    };
 
         class UDPReadRunnable implements Runnable {
             public volatile boolean halt = false;
@@ -182,60 +252,9 @@ public class App extends Application {
                     //Log.e(App.TAG, "Read tsl: " + line);
                     try {
                         final JSONObject obj = new JSONObject(line);
-                        switch ((String) obj.get("action")) {
 
-                            case "INVITE_RECEIVE":
-                                //2d String array
-                                JSONArray arr = obj.getJSONArray("maps");
-                                int size = arr.length();
-                                ArrayList<Invite> invites = new ArrayList<Invite>();
-                                for(int i = 0; i < size; i ++){
-                                    Invite inv = new Invite();
-                                    JSONArray jarr = arr.getJSONArray(i);
-                                    inv.gameNumber = jarr.getString(0);
-                                    inv.name = jarr.getString(1);
-                                    if(jarr.length()>2 && jarr.getString(2).equals("pending")) {
-                                        inv.fromMe = true;
-                                    }else {
-                                        inv.fromMe = false;
-                                    }
-                                    inv.toUser = jarr.getString(3);
-                                    inv.validated = Boolean.parseBoolean(jarr.getString(4));
+                        readTSLInfo(obj);
 
-                                    invites.add(inv);
-                                }
-                                info.invites = invites;
-
-                                break;
-                            case "login_accepted":
-                                info.user=obj.getJSONArray("vals").getString(0);
-                                info.password=obj.getJSONArray("vals").getString(1);
-                                info.mScreenStatus = AppInfo.SCREENSTATUS.GAME;
-                                Log.e("TAG","Logging in, starting invites view activity");
-                                main.startSecondActivity();
-                                main = null;
-                                break;
-
-                            case "login_denied":
-                                try {
-                                    Snackbar snackbar = Snackbar.make(curView, "Incorrect login information...", Snackbar.LENGTH_LONG);
-                                    snackbar.show();
-                                }catch(Exception e){
-                                    e.printStackTrace();
-                                }
-                                break;
-
-                            case "SNACKBAR":
-                                try {
-                                    Snackbar snackbar = Snackbar.make(curView, obj.getJSONArray("vals").getString(0), Snackbar.LENGTH_LONG);
-                                    snackbar.show();
-                                }catch(Exception e){
-                                    e.printStackTrace();
-                                }
-                                break;
-                            default:
-                                break;
-                        }
                     }catch(Exception e){
                         e.printStackTrace();
                         System.exit(0);
@@ -244,16 +263,83 @@ public class App extends Application {
             }
         }
 
-        public void onServiceDisconnected(ComponentName className) {
-            // This is called when the connection with the service has been
-            // unexpectedly disconnected -- that is, its process crashed.
-            // Because it is running in our same process, we should never
-            // see this happen.
-            mBoundService = null;
-            Toast.makeText(getApplicationContext(), "Service disconnected",
-                    Toast.LENGTH_SHORT).show();
+        public void readTSLInfo(JSONObject obj){
+            Log.e("resp","readTSLInfo called");
+            try {
+                switch ((String) obj.get("action")) {
+
+                    case "INVITE_RECEIVE":
+                        //2d String array
+                        JSONArray arr = obj.getJSONArray("maps");
+                        int size = arr.length();
+                        ArrayList<Invite> invites = new ArrayList<Invite>();
+                        for (int i = 0; i < size; i++) {
+                            Invite inv = new Invite();
+                            JSONArray jarr = arr.getJSONArray(i);
+                            inv.gameNumber = jarr.getString(0);
+                            inv.name = jarr.getString(1);
+                            if (jarr.length() > 2 && jarr.getString(2).equals("pending")) {
+                                inv.fromMe = true;
+                            } else {
+                                inv.fromMe = false;
+                            }
+                            inv.toUser = jarr.getString(3);
+                            inv.validated = Boolean.parseBoolean(jarr.getString(4));
+
+                            invites.add(inv);
+                        }
+                        info.invites = invites;
+
+                        try {
+                            if(invitesFragment!=null) {
+                                invitesFragment.getView().post(new Runnable() {
+                                    public void run() {
+                                        invitesFragment.checkInvitesView();
+                                    }
+                                });
+                            }
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
+
+
+                        break;
+                    case "login_accepted":
+                        info.user = obj.getJSONArray("vals").getString(0);
+                        info.password = obj.getJSONArray("vals").getString(1);
+                        info.mScreenStatus = AppInfo.SCREENSTATUS.GAME;
+                        Log.e("TAG", "Logging in, starting invites view activity");
+                        main.startSecondActivity();
+                        main = null;
+                        break;
+
+                    case "login_denied":
+                        try {
+                            Snackbar snackbar = Snackbar.make(curView, "Incorrect login information...", Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                    case "SNACKBAR":
+                        try {
+                            Snackbar snackbar = Snackbar.make(curView, obj.getJSONArray("vals").getString(0), Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }catch(Exception e){
+                e.printStackTrace();
+            }
         }
-    };
+
+
+
 
 
     void doBindService() {

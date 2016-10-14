@@ -6,7 +6,6 @@ import org.json.JSONObject;
 /**
  * Created by brianroberts on 9/24/16.
  */
-
 class InfoObject {
 
     public String toJSon(){
